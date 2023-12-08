@@ -5,23 +5,9 @@ pasta_palavras = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'palav
 caminho_completo = os.path.join(pasta_palavras, 'palavras.txt')
 
 def jogar():
-    print("*********************************")
-    print("***Bem vindo ao jogo da Forca!***")
-    print("*********************************")
-
-    arquivo = open(caminho_completo, "r")
-    palavras = []
-
-    for linha in arquivo:
-        palavras.append(linha.strip())
-
-    arquivo.close()
-    
-    indice = random.randrange(0, len(palavras))
-
-    palavra_secreta = palavras[indice].lower()
-
-    letras_acertadas = ["_" for letras in palavra_secreta]
+    mensagem_de_bem_vindo()
+    palavra_secreta = carrega_palavra_secreta()
+    letras_acertadas = cria_lista_palavras(palavra_secreta)
 
     enforcou = False
     acertou = False
@@ -30,7 +16,6 @@ def jogar():
     while not enforcou and not acertou:
         chute = input("Qual letra? ").strip()
         chute = chute.lower()
-
         index = 0
 
         if chute in palavra_secreta:
@@ -54,6 +39,29 @@ def jogar():
     if enforcou:
         print("Você perdeu!")
         print("Fim do jogo")
+
+
+def mensagem_de_bem_vindo():
+    print("*********************************")
+    print("***Bem vindo ao jogo da Forca!***")
+    print("*********************************")
+
+def carrega_palavra_secreta():
+    palavras = []
+
+    with open(caminho_completo) as arquivo:
+        for linha in arquivo:
+            palavras.append(linha.strip())
+    
+    indice = random.randrange(0, len(palavras))
+
+    palavra_secreta = palavras[indice].lower()
+
+    return palavra_secreta
+
+def cria_lista_palavras(palavra):
+    lista_palavras = ["_" for letras in palavra]
+    return lista_palavras
 
 if(__name__ == "__main__"):
     jogar()
