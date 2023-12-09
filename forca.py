@@ -1,59 +1,68 @@
 import os.path
 import random
 
-pasta_palavras = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'palavras')
-caminho_completo = os.path.join(pasta_palavras, 'palavras.txt')
-
 def jogar():
     mensagem_de_bem_vindo()
     palavra_secreta = carrega_palavra_secreta()
     letras_acertadas = cria_lista_palavras(palavra_secreta)
+
+    print(letras_acertadas)
 
     enforcou = False
     acertou = False
     erros = 0
     
     while not enforcou and not acertou:
-        chute = input("Qual letra? ").strip()
-        chute = chute.lower()
-        index = 0
+        chute = chute_jogador()
 
         if chute in palavra_secreta:
-            for letra in palavra_secreta:
-                if chute == letra:
-                    print(f"encontrei a letra {letra} na posicao {index}")
-                    letras_acertadas[index] = letra                   
-                index += 1
+            marca_chute_correto(palavra_secreta, chute, letras_acertadas)
         else:
             erros += 1
             if erros < len(palavra_secreta):
                 print(f"Você ainda tem {len(palavra_secreta) - erros} tentativas.")
 
-        enforcou = erros == 6
+        enforcou = erros == len(palavra_secreta)
         acertou = "_" not in letras_acertadas
-        print(letras_acertadas)
+        imprime_letra_acertada(letras_acertadas)
 
     if acertou:
         print("Você ganhou!")
-        print("Fim do jogo")
     if enforcou:
-        print("Você perdeu!")
-        print("Fim do jogo")
+        print(f"Você perdeu! A palavra era {palavra_secreta}.")
 
+def marca_chute_correto(palavra_secreta, chute, letras_acertadas):
+    index = 0
+    for letra in palavra_secreta:
+        if chute == letra:
+            letras_acertadas[index] = letra       
+        index += 1
+
+def imprime_letra_acertada(palavra_acertada):
+    palavra = palavra_acertada
+    print(palavra)
+
+def chute_jogador():
+    chute = input("Qual letra? ").strip()
+    chute = chute.lower()
+
+    return chute
 
 def mensagem_de_bem_vindo():
     print("*********************************")
     print("***Bem vindo ao jogo da Forca!***")
     print("*********************************")
 
-def carrega_palavra_secreta():
+def carrega_palavra_secreta(nome_arquivo="palavras.txt", inicio_contagem=0):
+    pasta_palavras = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'palavras')
+    caminho_completo = os.path.join(pasta_palavras, nome_arquivo)
     palavras = []
 
     with open(caminho_completo) as arquivo:
         for linha in arquivo:
             palavras.append(linha.strip())
     
-    indice = random.randrange(0, len(palavras))
+    indice = random.randrange(inicio_contagem, len(palavras))
 
     palavra_secreta = palavras[indice].lower()
 
